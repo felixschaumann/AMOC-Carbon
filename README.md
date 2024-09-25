@@ -42,7 +42,7 @@ Here, `script_functions.jl` contains functions that are used by scripts. This is
 >
 > Most scripts start with the line `using DrWatson; @quickactivate "AMOC-Carbon"; cd(srcdir("META/src"))`. If this line runs without problems, you'll know that the repository structure is nested correctly.
 
-We use `DrWatson` to manage environments, file paths, and simulation runs in Julia. If you clone this repository, you should be able to recreate our Julia environment by running  
+We use the [`DrWatson`](https://juliadynamics.github.io/DrWatson.jl/dev/) package to manage environments, file paths, and simulation runs in Julia. If you clone this repository, you should be able to recreate our Julia environment by running  
 ```julia
 using Pkg
 Pkg.activate(".")
