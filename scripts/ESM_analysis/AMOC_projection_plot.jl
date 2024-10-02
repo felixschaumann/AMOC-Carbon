@@ -158,30 +158,14 @@ for (label, color) in zip(collect(names(AMOC_pi_vals)[2:end]), colours)
 end
 
 for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
-
+    
     amoc_ds = get_projection_ds(name)
     amoc_mean = amoc_ds["mean"] |> Array
     amoc_std = mean(amoc_ds["std"] |> Array) .* ones(length(amoc_mean))
-
+    
     ax.flatten()[i].plot(years, amoc_mean, lw=2, color=colours[i], clip_on=false)
     ax.flatten()[i].fill_between(years, amoc_mean .- amoc_std, amoc_mean .+ amoc_std, alpha=0.3, color=colours[i], clip_on=false)
-    AMOC_pi_array = ones(length(years)) .* AMOC_pi_vals[:, name][1];
-    ax.flatten()[i].plot(years, AMOC_pi_array, color=colours[i], linestyle="--", lw=2, clip_on=false)
-    ax.flatten()[i].fill_between(years, AMOC_pi_array .- AMOC_pi_vals[:, name][2], AMOC_pi_array .+ AMOC_pi_vals[:, name][2], alpha=0.3, color=colours[i], clip_on=false)
-
-    years = convert(Vector{Float64}, years)
-    amoc_mean = convert(Vector{Float64}, amoc_mean)
-    AMOC_pi_array = convert(Vector{Float64}, AMOC_pi_array)
-    ax.flatten()[i].fill_between(years, amoc_mean, AMOC_pi_array, where=(amoc_mean .< AMOC_pi_array), interpolate=true, color="none", hatch="//", edgecolor="gray", alpha=1., clip_on=false)
-
-    mean_storage_diff = round(MC_proj_res[1, name], digits=1)
-    std_storage_diff = round(MC_proj_res[2, name], digits=1)
-
-    text_x = 2098
-    text_y = (AMOC_pi_array[end] + amoc_mean[end]) / 1.95
-    ax.flatten()[i].text(text_x, text_y, "-$(mean_storage_diff)±$(std_storage_diff) PgC", fontsize=10, color=colours[i], weight="bold", va="center", ha="right", clip_on=false,
-    bbox=Dict("facecolor" => "white", "edgecolor" => "gray", "boxstyle" => "round,pad=0.2"))
-
+    
     ax.flatten()[i].text(2060, 25.6, name, color=colours[i], weight="bold", va="top", ha="center", fontsize=15)
 
     ax.flatten()[i].set_xlim(2015, 2100)
@@ -203,6 +187,39 @@ for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
     if i == 0 || i == 4
         ax.flatten()[i].set_ylabel("AMOC strength [Sv]", color="k")
     end
+
+end
+fig
+fig.savefig(plotsdir("proj_carbon_storage_diff_$(n_MC)_samples_proj.pdf"), dpi=400, bbox_inches="tight")
+
+for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
+
+    AMOC_pi_array = ones(length(years)) .* AMOC_pi_vals[:, name][1];
+    ax.flatten()[i].plot(years, AMOC_pi_array, color=colours[i], linestyle="--", lw=2, clip_on=false)
+    ax.flatten()[i].fill_between(years, AMOC_pi_array .- AMOC_pi_vals[:, name][2], AMOC_pi_array .+ AMOC_pi_vals[:, name][2], alpha=0.3, color=colours[i], clip_on=false)
+    
+end
+fig
+fig.savefig(plotsdir("proj_carbon_storage_diff_$(n_MC)_samples_proj+pi.pdf"), dpi=400, bbox_inches="tight")
+
+for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
+    
+    amoc_ds = get_projection_ds(name)
+    amoc_mean = amoc_ds["mean"] |> Array
+    AMOC_pi_array = ones(length(years)) .* AMOC_pi_vals[:, name][1];
+    
+    years = convert(Vector{Float64}, years)
+    amoc_mean = convert(Vector{Float64}, amoc_mean)
+    AMOC_pi_array = convert(Vector{Float64}, AMOC_pi_array)
+    ax.flatten()[i].fill_between(years, amoc_mean, AMOC_pi_array, where=(amoc_mean .< AMOC_pi_array), interpolate=true, color="none", hatch="//", edgecolor="gray", alpha=1., clip_on=false)
+
+    mean_storage_diff = round(MC_proj_res[1, name], digits=1)
+    std_storage_diff = round(MC_proj_res[2, name], digits=1)
+
+    text_x = 2098
+    text_y = (AMOC_pi_array[end] + amoc_mean[end]) / 1.95
+    ax.flatten()[i].text(text_x, text_y, "-$(mean_storage_diff)±$(std_storage_diff) PgC", fontsize=10, color=colours[i], weight="bold", va="center", ha="right", clip_on=false,
+    bbox=Dict("facecolor" => "white", "edgecolor" => "gray", "boxstyle" => "round,pad=0.2"))
 end
 
 fig.savefig(plotsdir("proj_carbon_storage_diff_$(n_MC)_samples.pdf"), dpi=400, bbox_inches="tight")
