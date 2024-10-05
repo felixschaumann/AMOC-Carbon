@@ -25,7 +25,15 @@ colours = [
 mpi_ds = get_projection_ds("mpiesmlr");
 years = year.(mpi_ds["time"] |> Array);
 
+####################################################################################
+####################################################################################
+####################################################################################
+#
 #%% make absolute and relative weakening plot alongside
+#
+####################################################################################
+####################################################################################
+####################################################################################
 
 PythonPlot.rc("font", size = 15)
 fig, ax = subplots(1, 2, figsize=(20, 8))
@@ -122,14 +130,24 @@ end
 fig.savefig(plotsdir("relative_amoc_projection.pdf"), dpi=400, bbox_inches="tight")
 fig
 
+####################################################################################
+####################################################################################
+####################################################################################
+#
 #%% carbon storage difference projection
+#
+####################################################################################
+####################################################################################
+####################################################################################
 
 n_MC = 10000
 MC_proj_res = CSV.read(datadir("MC_proj_results_$(n_MC)_samples.csv"), DataFrame)
 
-PythonPlot.rc("font", size = 15)
+PythonPlot.rc("font", size=15)
 fig, ax = subplots(2, 4, figsize=(17.8, 9.9))
 fig.subplots_adjust(hspace=0.3, wspace=0.3)
+
+minor_fontsize = 12
 
 for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
     amoc_ds = get_projection_ds(name)
@@ -154,7 +172,7 @@ ax[0, 0].spines["left"].set_position(("axes", -0.0))
 ax[0, 0].set_ylabel("AMOC strength [Sv]", color="k")
 
 for (label, color) in zip(collect(names(AMOC_pi_vals)[2:end]), colours)
-    ax[0, 0].text(1, 1.05 - 0.045 * findfirst(==(label), collect(names(AMOC_pi_vals)[2:end])), label, transform=ax[0, 0].transAxes, fontsize=10, color=color, va="top", ha="right", weight="bold")
+    ax[0, 0].text(1, 1.05 - 0.045 * findfirst(==(label), collect(names(AMOC_pi_vals)[2:end])), label, transform=ax[0, 0].transAxes, fontsize=12, color=color, va="top", ha="right", weight="bold")
 end
 
 for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
@@ -163,10 +181,10 @@ for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
     amoc_mean = amoc_ds["mean"] |> Array
     amoc_std = mean(amoc_ds["std"] |> Array) .* ones(length(amoc_mean))
     
-    ax.flatten()[i].plot(years, amoc_mean, lw=2, color=colours[i], clip_on=false)
+    ax.flatten()[i].plot(years, amoc_mean, lw=3, color=colours[i], clip_on=false)
     ax.flatten()[i].fill_between(years, amoc_mean .- amoc_std, amoc_mean .+ amoc_std, alpha=0.3, color=colours[i], clip_on=false)
     
-    ax.flatten()[i].text(2060, 25.6, name, color=colours[i], weight="bold", va="top", ha="center", fontsize=15)
+    ax.flatten()[i].text(2060, 25.6, name, color=colours[i], weight="bold", va="top", ha="center")
 
     ax.flatten()[i].set_xlim(2015, 2100)
     ax.flatten()[i].set_ylim(5, 25)
@@ -195,7 +213,7 @@ fig.savefig(plotsdir("proj_carbon_storage_diff_$(n_MC)_samples_proj.pdf"), dpi=4
 for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
 
     AMOC_pi_array = ones(length(years)) .* AMOC_pi_vals[:, name][1];
-    ax.flatten()[i].plot(years, AMOC_pi_array, color=colours[i], linestyle="--", lw=2, clip_on=false)
+    ax.flatten()[i].plot(years, AMOC_pi_array, color=colours[i], linestyle="--", lw=3, clip_on=false)
     ax.flatten()[i].fill_between(years, AMOC_pi_array .- AMOC_pi_vals[:, name][2], AMOC_pi_array .+ AMOC_pi_vals[:, name][2], alpha=0.3, color=colours[i], clip_on=false)
     
 end
@@ -218,7 +236,7 @@ for (i, name) in enumerate(names(AMOC_pi_vals)[2:end])
 
     text_x = 2098
     text_y = (AMOC_pi_array[end] + amoc_mean[end]) / 1.95
-    ax.flatten()[i].text(text_x, text_y, "-$(mean_storage_diff)±$(std_storage_diff) PgC", fontsize=10, color=colours[i], weight="bold", va="center", ha="right", clip_on=false,
+    ax.flatten()[i].text(text_x, text_y, "-$(mean_storage_diff)±$(std_storage_diff) PgC", fontsize=minor_fontsize, color=colours[i], weight="bold", va="center", ha="right", clip_on=false,
     bbox=Dict("facecolor" => "white", "edgecolor" => "gray", "boxstyle" => "round,pad=0.2"))
 end
 
