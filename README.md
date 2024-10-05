@@ -38,7 +38,7 @@ Here, `script_functions.jl` contains functions that are used by scripts. This is
 > This repository is meant to be nested. Most scripts require that the [META-AC model](https://github.com/felixschaumann/META-AC)  is cloned to the `src` folder:  
 > `git clone https://github.com/felixschaumann/META-AC`
 >
-> Importantly, this folder has to be renamed from `META-AC` to `META` for all the scripts to work seamlessly. Of course, the scripts could also be adapted to with with the folder name `META-AC`, if you prefer that.
+> Importantly, this folder has to be renamed from `META-AC` to `META` for all the scripts to work seamlessly. Of course, the scripts could also be adapted to work with the folder name `META-AC`, if you prefer that.
 >
 > Most scripts start with the line `using DrWatson; @quickactivate "AMOC-Carbon"; cd(srcdir("META/src"))`. If this line runs without problems, you'll know that the repository structure is nested correctly.
 
