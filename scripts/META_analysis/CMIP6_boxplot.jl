@@ -119,9 +119,17 @@ for i in 1:2
     ]
 end
 
-CSV.write(datadir("CMIP6_SCC_results_$(n_MC)_samples.csv"), df_SCC_results)
+CSV.write(datadir("CMIP6_SCC_results_$(n_MC)_samples.csv"), df_SCC_results) # careful: 2.6 and 8.5 values might overwrite 4.5 values
 
+####################################################################################
+####################################################################################
+####################################################################################
+#
 #%% boxplots in matplotlib
+#
+####################################################################################
+####################################################################################
+####################################################################################
 
 PythonPlot.rc("font", size = 15)
 mpi_color = (0, 108, 102)./255
@@ -234,6 +242,115 @@ ax.text(0.7, 5.5, latexstring("SCC for year 2020\nalong SSP2-4.5 (SSP5-8.5, SSP1
 ax.text(0.873, 4.7, "SSP2-4.5", horizontalalignment="left", verticalalignment="bottom", color="darkred", fontsize=15)
 ax.text(1.162, 4.7, "SSP5-8.5", horizontalalignment="left", verticalalignment="bottom", color="rebeccapurple", fontsize=15)
 ax.text(1.446, 4.7, "SSP1-2.6", horizontalalignment="left", verticalalignment="bottom", color="darkorange", fontsize=15)
+
+ax.axhline(0, color="black", linewidth=3., alpha=0.9);
+ax.axhline(1, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-1, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(2, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-2, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(3, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-3, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(4, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-4, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(5, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-5, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-6, color="black", linestyle="--", linewidth=1., alpha=1.);
+ax.axhline(-7, color="black", linestyle="--", linewidth=1., alpha=1.);
+
+for spine in ax.spines.values()
+    spine.set_linewidth(1.5)
+end
+
+ax.fill_between([0, 1.4], -100, 50, color="lightgray", alpha=1.)
+
+fig.savefig(plotsdir("CMIP6_boxplot.pdf"), dpi=400, bbox_inches="tight");
+fig
+
+####################################################################################
+####################################################################################
+####################################################################################
+#
+#%% boxplots in matplotlib without SSP1-2.6 and SSP5-8.5
+#
+####################################################################################
+####################################################################################
+####################################################################################
+
+PythonPlot.rc("font", size = 15)
+mpi_color = (0, 108, 102)./255
+
+fig, ax = subplots(figsize=(17.8, 9.9));
+
+x_positions = [
+                0.6, .8, 1., 1.2,
+                1.7,
+                2.05, 2.4, 2.75, 3.1, 3.45, 
+                3.8,
+                ]
+
+boxplot_artists = ax.boxplot(
+    vcat(Delta_amoc_sccs_T_45, 
+    Delta_amoc_sccs_C_45, 
+    ), 
+    vert=true, sym="o", positions=x_positions, 
+    showmeans=true, meanline=false, widths=0.3, patch_artist=true, 
+    medianprops=Dict("color"=>"gray", "linewidth"=>2.5), 
+    meanprops=Dict("marker"=>"x", "markersize"=>10, "markeredgecolor"=>"darkred", "markeredgewidth" => 3.5),
+    boxprops=Dict("color"=>"black", 
+    "linewidth"=>2.5),
+    whiskerprops=Dict("color"=>"black", "linewidth"=>2.5),
+    capprops=Dict("color"=>"black", "linewidth"=>2.5),
+    flierprops=Dict("markerfacecolor"=>"gray", "markersize"=>2.5, "markeredgecolor"=>"gray"),
+    showfliers=false,
+    whis=[5, 95]
+);
+
+for i in 0:length(boxplot_artists["boxes"])-1
+    PythonPlot.setp(boxplot_artists["boxes"][i]);
+    PythonPlot.setp(boxplot_artists["whiskers"][i]);
+    boxplot_artists["boxes"][i].set_facecolor("white");
+    boxplot_artists["boxes"][i].set_alpha(1.);
+    if i < 4
+        boxplot_artists["means"][i].set_markeredgecolor("black");
+    end
+end
+
+ax.set_ylabel("∆SCC [%]");
+ylims = (-8., 6.);
+ax.set_ylim(ylims);
+ax.set_yticks(collect(-7:1:5.));
+# ax.set_yticks(collect(-7.5:0.5:5.5), minor=true);
+ax.tick_params(axis="both", which="major", width=1.5)
+# ax.tick_params(axis="both", which="minor", width=1.)
+
+
+ax.set_xlim(0.4, 4.1);
+ax.set_xticklabels(vcat([
+                        "67%\nHadley", 
+                        "27%\nIPSL",
+                        "24%\nBCM", 
+                        "7%\nHADCM", 
+                        ], 
+                        "22.5%\nMPI-ESM",
+                        "23.5%\nACCESS-ESM ",
+                        "23.3%\nCanESM",
+                        "42.5%\nGISS",
+                        "42.1%\nMIROC",
+                        "47.9%\nCESM",
+                        "49.3%\nNorESM",
+                        ), fontsize=15);
+
+ax.text(0.9, 1.02*ylims[2], "META temperature effect", horizontalalignment="center", verticalalignment="bottom", color="black", weight="bold", alpha=1.);
+ax.text(2.75, 1.02*ylims[2], "CMIP6-calibrated carbon effect", horizontalalignment="center", verticalalignment="bottom", color="darkred", weight="bold", alpha=1.);
+
+ax.text(0.1, -8.95, "Weakening\nModel", horizontalalignment="left", verticalalignment="bottom", fontsize=15)
+ax.text(0.1, -9.6, "Method", horizontalalignment="left", verticalalignment="bottom", fontsize=15)
+ax.text(0.9, -9.6, "──── Stochastic tipping ────", horizontalalignment="center", verticalalignment="bottom", fontsize=15)
+ax.text(2.75, -9.6, "─────────────────────────── Gradual weakening ───────────────────────────", horizontalalignment="center", verticalalignment="bottom", fontsize=15)
+
+bbox_props = Dict("boxstyle" => "round,pad=0.3", "edgecolor" => "black", "facecolor" => "white", "linewidth" => 1.5)
+
+ax.text(0.7, 5.5, latexstring("SCC for year 2020\nalong SSP2-4.5\nwith \$\\eta=$(emuc)\$ and \$\\delta=$(prtp*100)\\%\$,\n$(Dam) damages, \$\\varphi=$(persist)\$:\n\$ SCC_\\text{no AMOC} = $(Int(round(mean([mean(noamoc_sccs_T_45[1]), mean(noamoc_sccs_C_45[1])]), digits=0))) \\\$ \$"), horizontalalignment="left", verticalalignment="top", fontsize=15, bbox=bbox_props)
 
 ax.axhline(0, color="black", linewidth=3., alpha=0.9);
 ax.axhline(1, color="black", linestyle="--", linewidth=1., alpha=1.);
