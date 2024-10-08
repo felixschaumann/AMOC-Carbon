@@ -372,5 +372,5 @@ end
 
 ax.fill_between([0, 1.4], -100, 50, color="lightgray", alpha=1.)
 
-fig.savefig(plotsdir("CMIP6_boxplot.pdf"), dpi=400, bbox_inches="tight");
+fig.savefig(plotsdir("CMIP6_boxplot_45_only.pdf"), dpi=400, bbox_inches="tight");
 fig
