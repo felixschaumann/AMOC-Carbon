@@ -48,3 +48,41 @@ for (j, pattern) in enumerate(["IPSL", "BCM", "HADCM", "Hadley", false])
 end
 
 CSV.write(datadir("exogenous_temp_patterns.csv"), df_pattern_results)
+
+#%% Write to table
+
+df_pattern_results = CSV.read(datadir("exogenous_temp_patterns.csv"), DataFrame)
+
+table = ""
+for (i, r) in enumerate(eachrow(df_pattern_results))
+    row = "$(r.Model) & $(r.∆SCC_nopattern) \\% & $(r.∆SCC_IPSL) \\% & $(r.∆SCC_BCM) \\% & $(r.∆SCC_HADCM) \\% & $(r.∆SCC_Hadley) \\% "*"\\"*"\\"*"\n"
+    table *= row
+end
+
+println(table)
+
+#%% separate issue, raised by the same reviewer: can the difference in SCC changes be explained by timescales?
+
+AMOC_pi_vals = CSV.read(srcdir("META/data/CMIP6_amoc/AMOC_pi_values.csv"), DataFrame)
+
+weakening_wrt_2015 = filter(row -> row."AMOC variable" == "2100_weakening_to_2015", AMOC_pi_vals)
+weakening_wrt_pi = filter(row -> row."AMOC variable" == "2100_weakening_to_pi", AMOC_pi_vals)
+
+ratio_SCC_to_weakening = Dict()
+
+for key in keys(cmip6_model_names)
+    ∆SCC = df_pattern_results[findfirst(df_pattern_results.Model .== key), :∆SCC_nopattern]
+    println("$(key) SCC change: $(∆SCC) %")
+    weakening = weakening_wrt_2015[!, key][1]
+    weakening_pi = weakening_wrt_pi[!, key][1]
+    # filter(row -> row."Model" == key, weakening_wrt_2015)
+    ratio_2015 = round(∆SCC/weakening, digits=3)
+    ratio_SCC_to_weakening[key] = ratio_2015
+    println("$(key) AMOC weakening: $(weakening) %")
+    println("$(key) ratio: $(ratio_2015)")
+    println("$(key) AMOC weakening to pi: $(weakening_pi) %")
+    println("$(key) ratio: $(round(∆SCC/weakening_pi, digits=3))")
+    println("-----------------------")
+end
+
+mean_ratio = mean(collect(values(ratio_SCC_to_weakening)))
