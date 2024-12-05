@@ -13,9 +13,10 @@ exps = ["g01", "u01", "g03", "u03", "g05", "u05",]
 
 #%% CREATE DATAFRAME
 
-df_ssp = get_carbon_data("ssp245")
-cutoff = 140 # 140 for full 1pct run
-df_pct = get_carbon_data("1pct")[1:cutoff, :]
+cutoff_ssp = 0 # 0 for full ssp run
+df_ssp = get_carbon_data("ssp245")[1:85-cutoff_ssp, :]
+cutoff_1pct = 0 # 0 for full 1pct run
+df_pct = get_carbon_data("1pct")[1:140-cutoff_1pct, :]
 
 #%% CALCULATE CARBON FLUXES
 
@@ -203,8 +204,13 @@ axs[0].spines["right"].set_visible(false)
 
 fig.text(-0.03, 0.5, latexstring("Carbon flux change \$ \\Delta F\\ \\left[\\frac{\\mathrm{PgC}}{\\mathrm{yr}}\\right]\$"), va="center", rotation="vertical")
 
-axs[1].text(0.45, 0.95, "SSP2-4.5 \$\\mathbf{CO_2}\$ increase", transform=axs[1].transAxes, weight="bold", ha="center")
-axs[0].text(0.45, 0.95, "1% per year \$\\mathbf{CO_2}\$ increase", transform=axs[0].transAxes, weight="bold", ha="center")
+if cutoff_1pct != 0 || cutoff_ssp != 0
+    axs[1].text(0.45, 0.95, "SSP2-4.5 \$\\mathbf{CO_2}\$ increase (2015-$(2100-cutoff_ssp))", transform=axs[1].transAxes, weight="bold", ha="center")
+    axs[0].text(0.45, 0.95, "1% per year \$\\mathbf{CO_2}\$ increase (years 0-$(140-cutoff_1pct))", transform=axs[0].transAxes, weight="bold", ha="center")
+else
+    axs[1].text(0.45, 0.95, "SSP2-4.5 \$\\mathbf{CO_2}\$ increase", transform=axs[1].transAxes, weight="bold", ha="center")
+    axs[0].text(0.45, 0.95, "1% per year \$\\mathbf{CO_2}\$ increase", transform=axs[0].transAxes, weight="bold", ha="center")
+end
 
 fig.text(0.095, 0.865, "a", ha="left", fontsize=20, weight="bold")
 fig.text(0.095, 0.358, "b", ha="left", fontsize=20, weight="bold")
@@ -257,7 +263,11 @@ axs[0].fill_between(x_range, confint_99_0_pct[1] .* (x_range.-AMOC_pi_pct), conf
 axs[1].legend(loc=4, fontsize=12, ncol=1, bbox_to_anchor=(0.92, -0.1), borderaxespad=0., framealpha=0)
 axs[0].legend(loc=4, fontsize=12, ncol=1, bbox_to_anchor=(0.945, 0.025), borderaxespad=0., framealpha=0)
 
-fig.savefig(plotsdir("hosing_carbon_regressions_combined_$(running_window)rm.pdf"), dpi=400, bbox_inches="tight");
+if cutoff_1pct != 0 || cutoff_ssp != 0
+    fig.savefig(plotsdir("hosing_carbon_regressions_combined_$(running_window)rm_cutoff_$(cutoff_1pct)_1pct_$(cutoff_ssp)_ssp.pdf"), dpi=400, bbox_inches="tight");
+else
+    fig.savefig(plotsdir("hosing_carbon_regressions_combined_$(running_window)rm.pdf"), dpi=400, bbox_inches="tight");
+end
 fig
 
 ####################################################################################
@@ -337,5 +347,9 @@ ax.fill_between(x_range, confint_99_0_ssp[1] .* (x_range.-AMOC_pi_ssp), confint_
 
 ax.legend(loc=4, fontsize=minor_fontsize, ncol=1, bbox_to_anchor=(0.92, -0.08), borderaxespad=0., framealpha=0)
 
-fig.savefig(plotsdir("hosing_carbon_regressions_ssp245_$(running_window)rm.pdf"), dpi=400, bbox_inches="tight");
+if cutoff_ssp != 0
+    fig.savefig(plotsdir("hosing_carbon_regressions_ssp245_$(running_window)rm_cutoff_$(cutoff_ssp).pdf"), dpi=400, bbox_inches="tight");
+else
+    fig.savefig(plotsdir("hosing_carbon_regressions_ssp245_$(running_window)rm.pdf"), dpi=400, bbox_inches="tight");
+end
 fig
