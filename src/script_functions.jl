@@ -57,3 +57,9 @@ function get_sccs(df::DataFrame; N_samples::Int, AMOC::String, Scenario::String,
 
     return df[condition, :].sccs, df[condition, :].MC_samples
 end
+
+function trim_extremes(data::Vector{Float64}, percentage::Float64)
+    lower_cutoff = quantile(data, percentage)
+    upper_cutoff = quantile(data, 1 - percentage)
+    return filter(x -> x >= lower_cutoff && x <= upper_cutoff, data)
+end

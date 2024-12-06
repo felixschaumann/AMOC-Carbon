@@ -125,6 +125,26 @@ CSV.write(datadir("CMIP6_SCC_results_$(n_MC)_samples.csv"), df_SCC_results) # ca
 ####################################################################################
 ####################################################################################
 #
+#%% trim extreme values from MC samples
+#
+####################################################################################
+####################################################################################
+####################################################################################
+
+Delta_amoc_sccs_C_45_trim1 = [trim_extremes(Delta_amoc_sccs_C_45[i], 0.01) for i in 1:length(Delta_amoc_sccs_C_45)]
+Delta_amoc_sccs_C_45_trim01 = [trim_extremes(Delta_amoc_sccs_C_45[i], 0.001) for i in 1:length(Delta_amoc_sccs_C_45)]
+Delta_amoc_sccs_C_26_trim1 = [trim_extremes(Delta_amoc_sccs_C_26[i], 0.01) for i in 1:length(Delta_amoc_sccs_C_26)]
+Delta_amoc_sccs_C_26_trim01 = [trim_extremes(Delta_amoc_sccs_C_26[i], 0.001) for i in 1:length(Delta_amoc_sccs_C_26)]
+Delta_amoc_sccs_C_85_trim1 = [trim_extremes(Delta_amoc_sccs_C_85[i], 0.01) for i in 1:length(Delta_amoc_sccs_C_85)]
+Delta_amoc_sccs_C_85_trim01 = [trim_extremes(Delta_amoc_sccs_C_85[i], 0.001) for i in 1:length(Delta_amoc_sccs_C_85)]
+
+Delta_amoc_sccs_T_45_trim1 = [trim_extremes(Delta_amoc_sccs_T_45[i], 0.01) for i in 1:length(Delta_amoc_sccs_T_45)]
+Delta_amoc_sccs_T_45_trim01 = [trim_extremes(Delta_amoc_sccs_T_45[i], 0.001) for i in 1:length(Delta_amoc_sccs_T_45)]
+
+####################################################################################
+####################################################################################
+####################################################################################
+#
 #%% boxplots in matplotlib
 #
 ####################################################################################
