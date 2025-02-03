@@ -1,7 +1,7 @@
 # Weakening AMOC reduces ocean carbon uptake and increases the social cost of carbon: Data and Code
 
 This repository provides the code for reproducing the results of _Schaumann & Alastrué de Asenjo (2025): Weakening AMOC reduces ocean carbon uptake and increases the social cost of carbon_. 
-The repository version at the stage of paper submission is archived here: [![DOI](https://zenodo.org/badge/863096132.svg)](https://doi.org/10.5281/zenodo.13896139)
+The repository version at the stage of publication is archived here: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13896139.svg)](https://doi.org/10.5281/zenodo.13896139)
 
 ## Structure of the repository
 
